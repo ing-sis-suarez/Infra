@@ -30,7 +30,7 @@ services:
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager:latest
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       DB_USER: postgres
       DB_PASSWORD: postgres
