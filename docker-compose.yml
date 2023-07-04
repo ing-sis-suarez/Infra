@@ -34,13 +34,13 @@ services:
     environment:
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_HOST: snippet-manager-dev
+      DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
 
-  snippet-manager-db:
+  db-snippet-manager:
     image: postgres:alpine
-    container_name: db-snippets-manager-dev
+    container_name: db-snippet-manager
     restart: always
     environment:
       - POSTGRES_DB=snippet-manager
