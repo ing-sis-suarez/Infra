@@ -32,11 +32,25 @@ services:
     ports:
       - "8080:8080"
     environment:
+      DD_API_KEY: ${DD_APIKEY}
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
+   labels:
+      com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
+
+
+      api:
+    build: .
+    container_name: api
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+    ports:
+      - 8080:8080
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
 
   db-snippet-manager:
     image: postgres:alpine
