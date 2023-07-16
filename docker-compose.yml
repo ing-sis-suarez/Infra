@@ -27,6 +27,14 @@ services:
   #      DB_HOST: snippet_manager_db
   #      DB_PORT: 5432
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot/ --force-renewal --email jorge.suarez@ing.austral.edu.ar -d ing-sis-org.casacam.net --agree-tos
+
   proxy:
     container_name: "reverse-proxy"
     image: nginx
@@ -35,13 +43,13 @@ services:
       - "443:443"
     volumes:
       - ./conf.d:/etc/nginx/conf.d:ro
-  #      - ./certbot/conf:/etc/letsencrypt
-  #      - ./certbot/www:/var/www/certbot
-  #    depends_on:
-  #      - db-roles
-  #      - roles
-  #      - snippet-manager
-  #      - db-snippet-manager
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - db-roles
+      - roles
+      - snippet-manager
+      - db-snippet-manager
 
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
