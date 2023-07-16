@@ -16,16 +16,16 @@ services:
   #     DB_PORT: 5432
 
 
-#  snippet-api:
-#    image: ghcr.io/ingsis-group-6/snippet-api:latest
-#    #    ports:
-#    #      - "8080:8080"
-#    environment:
-#      DB_USER: sa
-#      DB_PASSWORD: password
-#      DB_NAME: compose-db
-#      DB_HOST: snippet_manager_db
-#      DB_PORT: 5432
+  #  snippet-api:
+  #    image: ghcr.io/ingsis-group-6/snippet-api:latest
+  #    #    ports:
+  #    #      - "8080:8080"
+  #    environment:
+  #      DB_USER: sa
+  #      DB_PASSWORD: password
+  #      DB_NAME: compose-db
+  #      DB_HOST: snippet_manager_db
+  #      DB_PORT: 5432
 
   proxy:
     container_name: "reverse-proxy"
@@ -35,13 +35,13 @@ services:
       - "443:443"
     volumes:
       - ./conf.d:/etc/nginx/conf.d:ro
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
-#    depends_on:
-#      - db-roles
-#      - roles
-#      - snippet-manager
-#      - db-snippet-manager
+  #      - ./certbot/conf:/etc/letsencrypt
+  #      - ./certbot/www:/var/www/certbot
+  #    depends_on:
+  #      - db-roles
+  #      - roles
+  #      - snippet-manager
+  #      - db-snippet-manager
 
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
@@ -59,6 +59,23 @@ services:
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
 
+  db-snippet-manager:
+    image: postgres:alpine
+    container_name: db-snippet-manager
+    restart: always
+    expose:
+      - '5432'
+    command:
+      - -p 5432
+    volumes:
+      - db-data:/var/lib/postgresql/snippet-manager
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U postgres' ]
+      interval: 1s
+      timeout: 1s
+      retries: 15
+
+
   roles:
     image: ghcr.io/ing-sis-org/roles-dev:latest
     expose:
@@ -69,26 +86,11 @@ services:
       DB_PASSWORD: postgres
       DB_HOST: db-roles
       DB_NAME: roles
-      DB_PORT: 5432
+      DB_PORT: 5433
     depends_on:
       - db-roles
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
-
-
-  db-snippet-manager:
-    image: postgres:alpine
-    container_name: db-snippet-manager
-    restart: always
-    ports:
-      - '5432:5432'
-    volumes:
-      - db-data:/var/lib/postgresql/snippet-manager
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 1s
-      timeout: 1s
-      retries: 15
 
 
   db-roles:
@@ -97,8 +99,6 @@ services:
     restart: always
     expose:
       - '5433'
-    ports:
-      - '5433:5433'
     command:
       - -p 5433
     volumes:
@@ -150,5 +150,5 @@ services:
 #      - "80:80"
 #    volumes:
 #      - ./conf.d:/etc/nginx/conf.d:ro
-volumes: 
+volumes:
   db-data:
