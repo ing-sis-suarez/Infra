@@ -45,8 +45,8 @@ services:
 
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
-    ports:
-      - "8080:8080"
+    expose:
+      - '8080'
     environment:
       DD_API_KEY: ${DD_APIKEY}
       DB_USER: postgres
@@ -61,8 +61,8 @@ services:
 
   roles:
     image: ghcr.io/ing-sis-org/roles-dev:latest
-    ports:
-      - "8080:8080"
+    expose:
+      - '8080'
     environment:
       DD_API_KEY: ${DD_APIKEY}
       DB_USER: postgres
