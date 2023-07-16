@@ -37,11 +37,11 @@ services:
       - ./conf.d:/etc/nginx/conf.d:ro
 #      - ./certbot/conf:/etc/letsencrypt
 #      - ./certbot/www:/var/www/certbot
-    depends_on:
-      - db-roles
-      - roles
-      - snippet-manager
-      - db-snippet-manager
+#    depends_on:
+#      - db-roles
+#      - roles
+#      - snippet-manager
+#      - db-snippet-manager
 
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
@@ -54,6 +54,8 @@ services:
       DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
+    depends_on:
+      - db-snippet-manager
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
 
@@ -68,6 +70,8 @@ services:
       DB_HOST: db-roles
       DB_NAME: roles
       DB_PORT: 5432
+    depends_on:
+      - db-roles
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
 
@@ -108,7 +112,7 @@ services:
   datadog:
     image: datadog/agent
     environment:
-      - DD_API_KEY=${DD_API_KEY}
+      - DD_API_KEY=${DD_APIKEY}
       - DD_SITE=us5.datadoghq.com
       - DD_LOGS_ENABLED=true
       - DD_APM_ENABLED=true
