@@ -63,6 +63,8 @@ services:
     image: postgres:alpine
     container_name: db-snippet-manager
     restart: always
+    environment:
+      - DB_PASSWORD=password
     expose:
       - '5432'
     command:
@@ -97,6 +99,8 @@ services:
     image: postgres:alpine
     container_name: db-roles
     restart: always
+    environment:
+      - DB_PASSWORD=password
     expose:
       - '5433'
     command:
