@@ -27,6 +27,22 @@ services:
 #      DB_HOST: snippet_manager_db
 #      DB_PORT: 5432
 
+  proxy:
+    container_name: "reverse-proxy"
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - db-roles
+      - roles
+      - snippet-manager
+      - db-snippet-manager
+
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
     ports:
@@ -38,28 +54,28 @@ services:
       DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
-   labels:
-      com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
-
-
-      api:
-    build: .
-    container_name: api
-    environment:
-      - DD_API_KEY=${DD_API_KEY}
-    ports:
-      - 8080:8080
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
+
+  roles:
+    image: ghcr.io/ing-sis-org/roles-dev:latest
+    ports:
+      - "8080:8080"
+    environment:
+      DD_API_KEY: ${DD_APIKEY}
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: db-roles
+      DB_NAME: roles
+      DB_PORT: 5432
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
+
 
   db-snippet-manager:
     image: postgres:alpine
     container_name: db-snippet-manager
     restart: always
-    environment:
-      - POSTGRES_DB=snippet-manager
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
     volumes:
@@ -69,6 +85,37 @@ services:
       interval: 1s
       timeout: 1s
       retries: 15
+
+
+  db-roles:
+    image: postgres:alpine
+    container_name: db-roles
+    restart: always
+    expose:
+      - '5433'
+    ports:
+      - '5433:5433'
+    command:
+      - -p 5433
+    volumes:
+      - db-data:/var/lib/postgresql/roles
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U postgres' ]
+      interval: 1s
+      timeout: 1s
+      retries: 15
+
+  datadog:
+    image: datadog/agent
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=us5.datadoghq.com
+      - DD_LOGS_ENABLED=true
+      - DD_APM_ENABLED=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
 
 #  snippet-runner:
 #    image: ghcr.io/ingsis-group-6/snippet-runner:latest
