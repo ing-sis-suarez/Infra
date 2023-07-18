@@ -59,6 +59,7 @@ services:
       DD_APIKEY: ${DD_APIKEY}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ROLES_URI: ${ROLES_URI}
       DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
