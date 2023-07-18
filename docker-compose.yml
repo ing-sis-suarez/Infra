@@ -93,7 +93,7 @@ services:
     expose:
       - '8080'
     environment:
-      DD_API_KEY: ${DD_APIKEY}
+      DD_APIKEY: ${DD_APIKEY}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: db-roles
