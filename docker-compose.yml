@@ -58,7 +58,7 @@ services:
       - "6379"
 
   runner:
-    image: ghcr.io/ing-sis-org/runner-dev:latest
+    image: ghcr.io/ing-sis-org/runner-prod:latest
     expose:
       - '8080'
     environment:
@@ -81,7 +81,7 @@ services:
 
 
   snippet-manager:
-    image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
+    image: ghcr.io/ing-sis-org/snippet-manager-prod:latest
     expose:
       - '8080'
     environment:
@@ -129,7 +129,7 @@ services:
 
 
   roles:
-    image: ghcr.io/ing-sis-org/roles-dev:latest
+    image: ghcr.io/ing-sis-org/roles-prod:latest
     expose:
       - '8080'
     environment:
