@@ -66,14 +66,14 @@ services:
     environment:
       DD_APIKEY: ${DD_APIKEY}
       ROLES_URI: http://localhost:8080
-      SERVER_PORT: 8082
+      SERVER_PORT: 8080
       USERNAME: ${USERNAME}
       TOKEN: ${TOKEN}
       REDIS_STREAM_LINTER_KEY: uwu
       REDIS_GROUPS_LINT: uwuwu
       REDIS_STREAM_FORMATER_KEY: awa
       REDIS_GROUPS_FORMAT: awawa
-      REDIS_HOST: localhost
+      REDIS_HOST: redis
       REDIS_PORT: 6379
       SNIPPET_MANAGER_URI: ${SNIPPET_MANAGER_URI}
     depends_on:
