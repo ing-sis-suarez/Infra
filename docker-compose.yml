@@ -56,8 +56,6 @@ services:
     image: redis:6-alpine
     expose:
       - "6379"
-    ports:
-      - "6379:6379"
 
   runner:
     image: ghcr.io/ing-sis-org/runner-dev:latest
