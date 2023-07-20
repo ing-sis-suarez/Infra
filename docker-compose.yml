@@ -98,7 +98,7 @@ services:
       REDIS_GROUPS_LINT: uwuwu
       REDIS_STREAM_FORMATER_KEY: awa
       REDIS_GROUPS_FORMAT: awawa
-      REDIS_HOST: localhost
+      REDIS_HOST: redis
       REDIS_PORT: 6379
       RUNNER_URI: ${RUNNER_URI}
     depends_on:
