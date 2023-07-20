@@ -33,7 +33,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot/ --force-renewal --email jorge.suarez@ing.austral.edu.ar -d ing-sis-org.casacam.net --agree-tos
+    command: certonly --webroot -w /var/www/certbot/ --force-renewal --email jorge.suarez@ing.austral.edu.ar -d ing-sis-prod.casacam.net --agree-tos
 
   proxy:
     container_name: "reverse-proxy"
