@@ -51,11 +51,42 @@ services:
       - snippet-manager
       - db-snippet-manager
 
+  redis:
+    container_name: "redis"
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  runner:
+    image: ghcr.io/ing-sis-org/runner-dev:latest
+    expose:
+      - '8080'
+    environment:
+      DD_APIKEY: ${DD_APIKEY}
+      ROLES_URI: http://localhost:8080
+      SERVER_PORT: 8082
+      USERNAME: ${USERNAME}
+      TOKEN: ${TOKEN}
+      REDIS_STREAM_LINTER_KEY: uwu
+      REDIS_GROUPS_LINT: uwuwu
+      REDIS_STREAM_FORMATER_KEY: awa
+      REDIS_GROUPS_FORMAT: awawa
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      SNIPPET_MANAGER_URI: ${SNIPPET_MANAGER_URI}
+    depends_on:
+      - redis
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
+
+
   snippet-manager:
     image: ghcr.io/ing-sis-org/snippet-manager-dev:latest
     expose:
       - '8080'
     environment:
+      USERNAME: ${USERNAME}
+      TOKEN: ${TOKEN}
       DD_APIKEY: ${DD_APIKEY}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -63,8 +94,16 @@ services:
       DB_HOST: db-snippet-manager
       DB_NAME: snippet-manager
       DB_PORT: 5432
+      REDIS_STREAM_LINTER_KEY: uwu
+      REDIS_GROUPS_LINT: uwuwu
+      REDIS_STREAM_FORMATER_KEY: awa
+      REDIS_GROUPS_FORMAT: awawa
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      RUNNER_URI: ${RUNNER_URI}
     depends_on:
       - db-snippet-manager
+      - redis
     labels:
       com.datadoghq.ad.logs: '[{"source": "java", "service": "api", "log_processing_rules": [{"type": "multi_line", "name": "log_start_with_date", "pattern" : "\\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])"}]}]'
 
