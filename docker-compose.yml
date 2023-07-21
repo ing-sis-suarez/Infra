@@ -1,31 +1,6 @@
 version: '3'
 
 services:
-  # snippet-infra-api:
-  #   container_name: "snippet-infra-api"
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8083:8083"
-  #   environment:
-  #     DB_USER: sa
-  #     DB_PASSWORD: password
-  #     DB_NAME: compose-db
-  #     DB_HOST: snippet_infra_db
-  #     DB_PORT: 5432
-
-
-  #  snippet-api:
-  #    image: ghcr.io/ingsis-group-6/snippet-api:latest
-  #    #    ports:
-  #    #      - "8080:8080"
-  #    environment:
-  #      DB_USER: sa
-  #      DB_PASSWORD: password
-  #      DB_NAME: compose-db
-  #      DB_HOST: snippet_manager_db
-  #      DB_PORT: 5432
 
   certbot:
     image: certbot/certbot
@@ -33,7 +8,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot/ --force-renewal --email jorge.suarez@ing.austral.edu.ar -d ing-sis-prod.casacam.net --agree-tos
+    command: certonly --webroot -w /var/www/certbot/ --force-renewal --email jorge.suarez@ing.austral.edu.ar -d ing-sis-org.casacam.net --agree-tos
 
   proxy:
     container_name: "reverse-proxy"
@@ -58,7 +33,7 @@ services:
       - "6379"
 
   runner:
-    image: ghcr.io/ing-sis-org/runner-prod:latest
+    image: ghcr.io/ing-sis-suarez/runner-dev:latest
     expose:
       - '8080'
     environment:
@@ -81,7 +56,7 @@ services:
 
 
   snippet-manager:
-    image: ghcr.io/ing-sis-org/snippet-manager-prod:latest
+    image: ghcr.io/ing-sis-suarez/snippet-manager-dev:latest
     expose:
       - '8080'
     environment:
@@ -129,7 +104,7 @@ services:
 
 
   roles:
-    image: ghcr.io/ing-sis-org/roles-prod:latest
+    image: ghcr.io/ing-sis-suarez/roles-dev:latest
     expose:
       - '8080'
     environment:
@@ -177,34 +152,5 @@ services:
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
 
-#  snippet-runner:
-#    image: ghcr.io/ingsis-group-6/snippet-runner:latest
-#    #    ports:
-#    #      - "8082:8080"
-#    environment:
-#      DB_USER: sa
-#      DB_PASSWORD: password
-#      DB_NAME: compose-db
-#      DB_HOST: snippet_manager_db
-#      DB_PORT: 5432
-#
-#  snippet-share:
-#    image: ghcr.io/ingsis-group-6/snippet-share:latest
-#    #    ports:
-#    #      - "8083:8080"
-#    environment:
-#      DB_USER: sa
-#      DB_PASSWORD: password
-#      DB_NAME: compose-db
-#      DB_HOST: snippet_manager_db
-#      DB_PORT: 5432
-
-#  proxy:
-#    container_name: "reverse-proxy"
-#    image: nginx
-#    ports:
-#      - "80:80"
-#    volumes:
-#      - ./conf.d:/etc/nginx/conf.d:ro
 volumes:
   db-data:
